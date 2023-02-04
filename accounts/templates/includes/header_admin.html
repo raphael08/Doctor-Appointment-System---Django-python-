@@ -166,9 +166,11 @@
 							</li>
 
 							{% endif %}
+							{% if perms.accounts.view_doctorschedule %}
 							<li> 
 								<a href="/doctorschedule"><i class="fe fe-user"></i> <span>Doctor schedule</span></a>
 							</li>
+							{% endif %}
 							{% if perms.accounts.view_patient %}
 							<li> 
 								<a href="/managepatient"><i class="fe fe-user"></i> <span>Patients</span></a>

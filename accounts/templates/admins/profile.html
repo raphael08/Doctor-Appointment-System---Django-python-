@@ -168,7 +168,7 @@
 																		<div class="form-group">
 																			<label>Date of Birth</label>
 																			<div class="cal-icon">
-																				<input type="date" name="dob" class="form-control" value="{{user.doctor.dob | date:"Y-m-d"}}">
+																				<input type="date" name="dob" class="form-control" value="{{user.doctor.dob | date:"Y-m-d"}}" required>
 																			</div>
 																		</div>
 																	</div>
@@ -199,7 +199,22 @@
 																			<input type="file" name="profile" class="form-control">
 																		</div>
 																	</div>
-													
+																	{% if request.user.is_staff == True %}
+																	<div class="col-12 col-sm-12">
+																		<div class="form-group">
+										
+																			{% for i in u %}
+																		{% if i in user.doctor.speciality.all %}
+																		<input type="checkbox" name="{{i.name}}" checked value="{{i.id}}"> {{i.name}}
+																		<br>
+																		{% else %}
+																		<input type="checkbox" name="{{i.name}}" value="{{i.id}}">  {{i.name}}
+																		<br>
+																		{% endif %}
+																		{% endfor %}
+																		</div>
+																	</div>
+																	{% endif %}
 																</div>
 																<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
 															</form>

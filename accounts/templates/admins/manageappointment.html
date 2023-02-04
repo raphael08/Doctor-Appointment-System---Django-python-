@@ -21,13 +21,13 @@
 					<!-- /Page Header -->
 					<div class="row">
 						<div class="col-md-12">
-							<div class="text-right">
+							{% comment %} <div class="text-right">
 								{% if perms.accounts.add_appointment %}
 							<a href="#edit_appointment_details" class="btn btn-sm bg-success-light" data-toggle="modal">
 								<i class="fe fe-plus"></i> New
 							</a>
 							{% endif %}
-						</div>
+						</div> {% endcomment %}
 							<br>
 							<!-- Recent Orders -->
 							<div class="card">
@@ -50,6 +50,7 @@
 											<tbody>
 												{% for i in appointment %}
 												{% if perms.accounts.view_appointment %}
+												
 												<tr>
 													<td>
 														<h2 class="table-avatar">
@@ -94,7 +95,7 @@
 															<i class="fe fe-trash"></i> Delete
 														</a>
 														{% endif %}
-														{% if perms.accounts.change_patient %}
+														{% if perms.accounts.view_patient  and i.status != "CANCELLED" %}
 														<a class="btn btn-sm bg-success-light" href="/approve_appointment/{{i.id}}">
 															<i class="fe fe-pencil"></i> Approve
 														</a>

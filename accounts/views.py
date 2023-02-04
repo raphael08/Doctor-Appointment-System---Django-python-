@@ -72,7 +72,13 @@ def managepatient(request):
 
 @login_required(login_url='/login')
 def adminprofile(request):
-    
+   u = Speciality.objects.all()
+   d=Doctor.objects.filter(user__id=request.user.id)
+   
+   try:
+      p =Doctor.objects.get(user__id=request.user.id)
+   except:
+      pass
    if request.method =='POST':
          
       fname = request.POST.get("fname")
@@ -94,10 +100,18 @@ def adminprofile(request):
          doctor=Doctor.objects.filter(id = request.user.doctor.id).update(profile=profile)
       except MultiValueDictKeyError:
          file_name = False
-      
+      for i in Speciality.objects.all():
+             p.speciality.remove(i.id)
+      s_id = []
+      spec = [x.name for x in Speciality.objects.all()]
+      for x in spec:
+             
+             s_id.append(int(request.POST.get(x))) if request.POST.get(x) else print("")
+      for s in s_id:
+           p.speciality.add(Speciality.objects.get(id=s)) 
       messages.success(request,'successful password changed login again')
-      return redirect('/dashboard')
-   return render(request,'admins/profile.html')
+      return redirect('/adminprofile')
+   return render(request,'admins/profile.html',{'u':u,'d':d})
 
 @login_required(login_url='/login')
 def reviews(request):
@@ -186,8 +200,12 @@ def editdoctor(request,pk):
    return render(request,'admins/editdoctor.html',{'d':d,'u':u,'t':t,'r':r})
 @login_required(login_url='/login')
 def editpatient(request,pk):
+   
+  
+   exclude_perm=[1,2,3,4,13,14,15,16,17,18,19,20,21,22,23,24,37,38,39,40]
+   r=User.objects.get(id=pk)
    u = Group.objects.all()
-   d=Patient.objects.filter(user__id=pk) #kuvuta data za user mwenye id hiyo
+   d=Patient.objects.filter(user__id=pk)
    p =Patient.objects.get(user__id=pk)
    t = Permission.objects.all()
    if request.method =='POST': # kuvuta data za field 
@@ -202,11 +220,28 @@ def editpatient(request,pk):
       profile = request.FILES.get("profile")
    
       
-      #update user table
-      u = User.objects.filter(id=pk).update(first_name=fname,last_name=lname,username=username)
-      #update patient table ambayo kwako ni custommer    
-      Patient.objects.filter(user_id=pk).update(dob=dob,address=address,phone_number=phone)  
-      try: #hi ni kwa ajili ya kuupdate picha
+      
+      u = User.objects.filter(id=pk).update(first_name=fname,last_name=lname,username=username)   
+      Patient.objects.filter(user_id=pk).update(dob=dob,address=address,phone_number=phone) 
+      for i in Group.objects.all():
+             p.user.groups.remove(i.id)
+             
+      for j in Permission.objects.all():
+              p.user.user_permissions.remove(j.id)
+      
+             
+      s_id = []
+      r_id=[]
+      permission = [x.name for x in Group.objects.all()]
+      perm = [i.name for i in Permission.objects.all()]
+      for x in permission:
+             
+             s_id.append(int(request.POST.get(x))) if request.POST.get(x) else print("")
+      for i in perm:
+             
+             r_id.append(int(request.POST.get(i))) if request.POST.get(i) else print("")
+             
+      try:
          file_name = request.FILES['profile'].name
          fs = FileSystemStorage()
          files = fs.save(profile.name,profile)
@@ -215,7 +250,11 @@ def editpatient(request,pk):
          d.update(profile=profile)
       except MultiValueDictKeyError:
          file_name = False
-      
+      for s in s_id:
+           p.user.groups.add(Group.objects.get(id=s)) 
+      for r in r_id:
+           p.user.user_permissions.add(Permission.objects.get(id=r))
+           
       messages.success(request,'successful password changed login again')
       return HttpResponseRedirect(request.path_info) #return on same page
 
@@ -300,7 +339,7 @@ def adddoctor(request):
       u.first_name=fname
       u.last_name=lname
       u.is_staff='True'
-      u.password=make_password(doctorId)
+      u.password=make_password("12345")
       u.save()
       
       
@@ -318,9 +357,9 @@ def adddoctor(request):
       for i in r_id:
            u.groups.add(Group.objects.get(id=i))
       
-      message = "Here is your Login credentials \n Email: "+username+"\n"+"Password: "+doctorId+"\n \n"+"Welcome Doctor"
-      send_mail('Welcome To Doctor Appointment System',message,'systemdevelopment8@gmail.com',[username],
-          fail_silently=False)
+      # message = "Here is your Login credentials \n Email: "+username+"\n"+"Password: "+doctorId+"\n \n"+"Welcome Doctor"
+      # send_mail('Welcome To Doctor Appointment System',message,'systemdevelopment8@gmail.com',[username],
+         #  fail_silently=False)
       # msg = EmailMessage('Subject of the Email', 'Body of the email', 'systemdevelopment8@gmail.com', [username])
       # msg.content_subtype = "html"  
       # msg.attach_file('media/profile_pic/1.png')
@@ -370,9 +409,9 @@ def addpatient(request):
            g.user.groups.add(Group.objects.get(id=s))
       
     
-      message = "Here is your Login credentials \n Email: "+username+"\n"+"Password: "+patientId+"\n \n"+"Welcome"
-      send_mail('Welcome To Doctor Appointment System',message,'systemdevelopment8@gmail.com',[username],
-          fail_silently=False)
+      # message = "Here is your Login credentials \n Email: "+username+"\n"+"Password: "+patientId+"\n \n"+"Welcome"
+      # send_mail('Welcome To Doctor Appointment System',message,'systemdevelopment8@gmail.com',[username],
+      #     fail_silently=False)
       
       messages.info(request,'successful')
       return redirect('/managedoctor')   
@@ -432,7 +471,7 @@ def registerdoctor(request):
 
    doctor = random.randint(1,1000)
 
-
+   t = Speciality.objects.all()
    if request.method == 'POST':
         fname = request.POST.get("fname")
         mname = request.POST.get("mname")
@@ -446,7 +485,10 @@ def registerdoctor(request):
         if User.objects.filter(username=username).exists():
            messages.info(request,"User already exists")
            return redirect('/registerdoctor')   
-
+        speciality = [x.name for x in Speciality.objects.all()]
+        s_id = []
+        for x in speciality:
+             s_id.append(int(request.POST.get(x))) if request.POST.get(x) else print("")
         if (password1 == password2):
          u.username=username
          u.first_name=fname
@@ -461,14 +503,15 @@ def registerdoctor(request):
          g.middle_name=mname
       
          g.save()
-
+         for s in s_id:
+           g.speciality.add(Speciality.objects.get(id=s))
          messages.info(request,'successful')
          return render(request,'login.html')
         
 
         else:
          messages.error(request,'mismatch password')
-   return render(request,'register_doctor.html')
+   return render(request,'register_doctor.html',{'t':t})
 @login_required(login_url='/login')
 def doctorappointment(request):
        
@@ -895,6 +938,7 @@ def delete_speciality(request,pk):
 
 
 def makeappointment(request,pk):
+   
    d=DoctorSchedule.objects.get(id=pk)
    
    

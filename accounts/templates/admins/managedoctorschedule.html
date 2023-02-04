@@ -15,16 +15,16 @@
 									<li class="breadcrumb-item"><a href="javascript:(0);">Users</a></li>
 									<li class="breadcrumb-item active">Doctor</li>
 								</ul>
-								{% if perms.accounts.add_doctor_schedule %}
+								{% if perms.accounts.add_doctorschedule %}
 								<a href="#add_doctor" class="btn btn-primary"  data-toggle="modal">
 									<i class="fe fe-plus"></i>New</a>
 									{% endif %}
 							</div>
-							{% if messages %}
+							{% comment %} {% if messages %}
 									{% for i in messages %}
 									{{i}}
 									{% endfor %}
-									{% endif %}
+									{% endif %} {% endcomment %}
 						</div>
 						
 					</div>
@@ -90,22 +90,22 @@
 												{{d.To}}
 											</td>
 													<td>
-														{% if perms.accounts.change_doctorschedule %}
+														{% comment %} {% if perms.accounts.change_doctorschedule %}
 															<a class="btn btn-sm bg-success-light"  href="/editdoctorschedule/{{d.id}}">
 																<i class="fe fe-pencil"></i> Edit
 															</a>
-															{% endif %}
-															{% if perms.accounts.delete_doctor_schedule %}
+															{% endif %} {% endcomment %}
+															{% if perms.accounts.delete_doctorschedule %}
 															
 															<a href="/deletedoctorschedule/{{d.id}}" class="btn btn-sm bg-danger-light">
 																<i class="fe fe-user-minus"></i> Delete
 															</a>
 															{% endif %}
-															
-															<a href="/makeappointment/{{d.id}}" class="btn btn-sm bg-danger-light">
+															{% if perms.accounts.add_appointment %}
+															<a href="/makeappointment/{{d.id}}" class="btn btn-sm bg-success-light">
 																<i class="fe fe-user-minus"></i> Make appointment
 															</a>
-														
+														{% endif %}
 															
                                                               
 															<!-- {% if d.user.is_active == True %}
