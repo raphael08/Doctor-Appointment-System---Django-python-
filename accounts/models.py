@@ -103,7 +103,7 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(DoctorSchedule, on_delete=models.CASCADE)
     status = models.CharField(max_length=50, choices=STATUS,default="PENDING")
     date_created = models.DateField(auto_now_add=True)
-    make_appointment = models.BooleanField(default=True)
+    make_appointment = models.BooleanField(default=False)
     
     def __str__(self):
         

@@ -41,6 +41,7 @@ def dashboard(request):
 @login_required(login_url='/login')
 def manageappointment(request):
    a= DoctorSchedule.objects.all()
+   
    p=Patient.objects.filter(user__username=request.user.username)
    appointment = Appointment.objects.all()
    context={'a':a,'p':p,'appointment':appointment}
@@ -393,7 +394,7 @@ def addpatient(request):
       u.first_name=fname
       u.last_name=lname
      
-      u.password=make_password(patientId)
+      u.password=make_password("12345")
       u.save()
      
       g.user=u
@@ -414,7 +415,7 @@ def addpatient(request):
       #     fail_silently=False)
       
       messages.info(request,'successful')
-      return redirect('/managedoctor')   
+      return redirect('/managepatient')   
 @login_required(login_url='/login')
 def removedoctor(request,pk):
       u = User.objects.filter(id=pk).filter(is_active='True')
@@ -523,10 +524,13 @@ def mypatient(request):
    return render(request,'doctor/my-patients.html')
 @login_required(login_url='/login')
 def doctorschedule(request):
+  
+
    doctors = DoctorSchedule.objects.all()
-   
+   a = Appointment.objects.filter(status="PENDING",make_appointment=True).exists()
+   b = Appointment.objects.filter(status="PENDING")
    c = Doctor.objects.exclude(doctorId=1).filter(is_deleted='False').filter(user__is_staff='True').order_by('id')
-   return render(request,'admins/managedoctorschedule.html',{'doctors':doctors,'c':c})
+   return render(request,'admins/managedoctorschedule.html',{'doctors':doctors,'c':c,'a':a,'b':b})
 
 def adddoctorschedule(request):
        
@@ -539,7 +543,8 @@ def adddoctorschedule(request):
        if (str(fro) > str(to)):
               messages.error(request,'time must be greater than from time')
               return redirect('/doctorschedule')
-       DoctorSchedule.objects.create(doctor=dname,dayAvailable=day,From=fro,To=to)
+       u=DoctorSchedule.objects.create(doctor=dname,dayAvailable=day,From=fro,To=to)
+       doctorschedule(request)
        return redirect('/doctorschedule')
 def deletedoctorschedule(request,pk):
        
@@ -946,11 +951,11 @@ def makeappointment(request,pk):
    p=Patient.objects.get(id=s)
    
       
-   Appointment.objects.create(doctor=d,patient=p)
-   
+   Appointment.objects.create(doctor=d,patient=p,make_appointment=True)
+   a = Appointment.objects.filter(patient=p.id,status="PENDING")
    return redirect('/doctorschedule')
 def cancellappointment(request,pk):
-       Appointment.objects.filter(id=pk).update(status='CANCELLED')
+       Appointment.objects.filter(id=pk).update(status='CANCELLED',make_appointment=False)
        return redirect('/manageappointment')
 def approve_appointment(request,pk):
  Appointment.objects.filter(id=pk).update(status='APPROVED')

@@ -1,6 +1,223 @@
 
+
+
 {% load static %}
-{% include "includes/header_admin.html" %}
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Mirrored from dreamguys.co.in/demo/doccure/admin/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 30 Nov 2019 04:12:20 GMT -->
+<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+        <title>DAS</title>
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+
+	<!-- jQuery library file -->
+	<script type="text/javascript"
+	src="https://code.jquery.com/jquery-3.5.1.js">
+	</script>
+
+	<!-- Datatable plugin JS library file -->
+	<script type="text/javascript" src=
+"https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js">
+	</script>
+		
+
+		
+		
+		<!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'admin/img/logo1.png'%}">
+		
+		<!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="{% static 'admin/css/bootstrap.min.css'%}">
+		
+		<!-- Fontawesome CSS -->
+        <link rel="stylesheet" href="{% static 'admin/css/font-awesome.min.css'%}">
+		
+		<!-- Feathericon CSS -->
+        <link rel="stylesheet" href="{% static 'admin/css/feathericon.min.css'%}">
+		
+		<link rel="stylesheet" href="{% static 'admin/plugins/morris/morris.css'%}">
+		
+		<!-- Main CSS -->
+        <link rel="stylesheet" href="{% static 'admin/css/style.css'%}">
+		
+
+
+		<!--[if lt IE 9]>
+			<script src="assets/js/html5shiv.min.js"></script>
+			<script src="assets/js/respond.min.js"></script>
+		<![endif]-->
+
+
+		
+    </head>
+    <body>
+	
+		<!-- Main Wrapper -->
+        <div class="main-wrapper">
+		
+			<!-- Header -->
+            <div class="header">
+			
+				<!-- Logo -->
+                <div class="header-left">
+                    <a href="/" class="logo">
+						<img src="{% static 'admin/img/logo1.png'%}" alt="Logo">
+					</a>
+					<a href="index.html" class="logo logo-small">
+						<img src="{% static 'admin/img/logo-small.png'%}" alt="Logo" width="30" height="30">
+					</a>
+                </div>
+				<!-- /Logo -->
+				
+				<a href="javascript:void(0);" id="toggle_btn">
+					<i class="fe fe-text-align-left"></i>
+				</a>
+				
+				<div class="top-nav-search">
+					<form>
+						<input type="text" class="form-control" placeholder="Search here">
+						<button class="btn" type="submit"><i class="fa fa-search"></i></button>
+					</form>
+				</div>
+				
+				<!-- Mobile Menu Toggle -->
+				<a class="mobile_btn" id="mobile_btn">
+					<i class="fa fa-bars"></i>
+				</a>
+				<!-- /Mobile Menu Toggle -->
+				
+				<!-- Header Right Menu -->
+				<ul class="nav user-menu">
+
+					<!-- Notifications -->
+					<li class="nav-item dropdown noti-dropdown">
+						<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+							<i class="fe fe-bell"></i> <span class="badge badge-pill">1</span>
+						</a>
+						<div class="dropdown-menu notifications">
+							<div class="topnav-dropdown-header">
+								<span class="notification-title">Notifications</span>
+								<a href="javascript:void(0)" class="clear-noti"> Clear All </a>
+							</div>
+							<div class="noti-content">
+								<ul class="notification-list">
+									<li class="notification-message">
+										<a href="#">
+											<div class="media">
+												<span class="avatar avatar-sm">
+													<img class="avatar-img rounded-circle" alt="User Image" src="{% static 'admin/img/doctors/doctor-thumb-01.jpg'%}">
+												</span>
+												<div class="media-body">
+													<p class="noti-details"><span class="noti-title">Dr. Ruby Perrin</span> Schedule <span class="noti-title">her appointment</span></p>
+													<p class="noti-time"><span class="notification-time">4 mins ago</span></p>
+												</div>
+											</div>
+										</a>
+									</li>
+									
+									
+								</ul>
+							</div>
+							<div class="topnav-dropdown-footer">
+								<a href="#">View all Notifications</a>
+							</div>
+						</div>
+					</li>
+					<!-- /Notifications -->
+					
+					<!-- User Menu -->
+					<li class="nav-item dropdown has-arrow">
+						<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+							{% if user.is_staff %}
+							<span class="user-img"><img class="rounded-circle" src="{{user.doctor.profile.url}}" width="31" alt="Ryan Taylor"></span>
+						{% else %}
+						<span class="user-img"><img class="rounded-circle" src="{{user.patient.profile.url}}" width="31" alt="Ryan Taylor"></span>
+							{% endif %}
+						</a>
+						<div class="dropdown-menu">
+							<div class="user-header">
+								<div class="avatar avatar-sm">
+									<img src="{{user.doctor.profile.url}}" alt="User Image" class="avatar-img rounded-circle">
+								</div>
+								<div class="user-text">
+									<h6>{{user.first_name}}</h6>
+									<p class="text-muted mb-0">{{user.first_name}}</p>
+								</div>
+							</div>
+							<a class="dropdown-item" href="/adminprofile">My Profile</a>
+							
+							<a class="dropdown-item" href="/logout">Logout</a>
+						</div>
+					</li>
+					<!-- /User Menu -->
+					
+				</ul>
+				<!-- /Header Right Menu -->
+				
+            </div>
+			<!-- /Header -->
+			
+			<!-- Sidebar -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-inner slimscroll">
+					<div id="sidebar-menu" class="sidebar-menu">
+						<ul>
+							<li class="menu-title"> 
+								<span>Main</span>
+							</li>
+							<li class=""> 
+								<a href="/dashboard"><i class="fe fe-home"></i> <span>Dashboard</span></a>
+							</li>
+							{% if perms.accounts.view_appointment %}
+							<li> 
+								<a href="/manageappointment"><i class="fe fe-layout"></i> <span>Appointments</span></a>
+							</li>
+							{% endif %}
+							{% if perms.accounts.view_speciality %}
+							<li> 
+								<a href="/managespeciality"><i class="fe fe-users"></i> <span>Specialities</span></a>
+							</li>
+							{% endif %}
+							{% if perms.accounts.view_doctor %}
+							<li> 
+								<a href="/managedoctor"><i class="fe fe-user-plus"></i> <span>Doctors</span></a>
+							</li>
+
+							{% endif %}
+							{% if perms.accounts.view_doctorschedule %}
+							<li> 
+								<a href="/doctorschedule"><i class="fe fe-user"></i> <span>Doctor schedule</span></a>
+							</li>
+							{% endif %}
+							{% if perms.accounts.view_patient %}
+							<li> 
+								<a href="/managepatient"><i class="fe fe-user"></i> <span>Patients</span></a>
+							</li>
+							{% endif %}
+							{% if perms.accounts.view_roles %}
+							<li> 
+								<a href="/manageroles"><i class="fe fe-star-o"></i> <span>Roles</span></a>
+							</li>
+							{% endif %}
+						    {% if perms.accounts.delete_doctor or perms.accounts.delete_patient %}
+							<li> 
+								<a href="/trash"><i class="fe fe-star-o"></i> <span>Trash</span></a>
+							</li>
+		                     {% endif %}
+ 							<li> 
+								<a href="/adminprofile"><i class="fe fe-user-plus"></i> <span>Profile</span></a>
+							</li>
+			
+						</ul>
+					</div>
+                </div>
+            </div>
+			<!-- /Sidebar -->
+			
+			<!-- Page Wrapper -->
+			
 			<!-- Page Wrapper -->
             <div class="page-wrapper">
                 <div class="content container-fluid">
@@ -20,6 +237,7 @@
 									<i class="fe fe-plus"></i>New</a>
 									{% endif %}
 							</div>
+							
 							{% comment %} {% if messages %}
 									{% for i in messages %}
 									{{i}}
@@ -29,20 +247,27 @@
 						
 					</div>
 					<!-- /Page Header -->
-					
+					{% comment %} <div class="col-12 col-sm-6">
+						<div class="form-group">
+						<input type="text" id="search" placeholder="Search..." class="form-control">
+					</div> {% endcomment %}
+				</div>
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="card">
-								<div class="card-body">
-									<div class="table-responsive">
-										<table class="datatable table table-hover table-center mb-0">
+								
+								<div class="ibox-body">
+									<div class="table-wrapper" role="group" aria-labelledby="caption">
+										
+										<table id="tableID" class="display" style="width:100%">
+
 											<thead>
 												<tr>
 													<th>Doctor Name</th>
 													<th>Email</th>
-													{% if perms.accounts.view_speciality %}
+													
 													<th>Speciality</th>
-													{% endif %}
+													
 													<th>Availabe Day</th>
 												
 												    
@@ -50,18 +275,18 @@
 													
 													
 													<th>To</th>
-													{% if perms.accounts.change_doctorschedule or perms.accounts.delete_doctorschedule %}
+													
 													<th>Action</th>
-													{% endif %}
+												
 												</tr>
 											</thead>
 											<tbody>
 												{% for d in doctors %}
 												<tr>
 													<td>
-														<h2 class="table-avatar">
+														
 															<a href="{{d.doctor.profile.url}}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{d.doctor.profile.url}}" alt="User Image"></a>
-															<a href="/editdoctor/{{d.user.id}}">Dr.{{d.doctor.user.last_name}}</a>
+															Dr.{{d.doctor.user.first_name}}
 														</h2>
 													</td>
 													<td>{{d.doctor.user.username}}</td>
@@ -69,32 +294,20 @@
 													<td>{% for i in d.doctor.speciality.all %}{{i}} {% endfor %}</td>
 													{% endif %}
 													<td>
-														<!-- <i class="fe fe-star text-warning"></i>
-														<i class="fe fe-star text-warning"></i>
-														<i class="fe fe-star text-warning"></i>
-														<i class="fe fe-star text-warning"></i>
-														<i class="fe fe-star-o text-secondary"></i> -->
+														
 														{{d.dayAvailable}}
 													</td>
 											
-											<!-- <td>{{d.user.last_login|date:"D,d/m/Y"}}</td> -->
+											
 											<td>
-												<!-- {% if d.user.is_active == True %}
-												<h6 style="color:blue">ACTIVE</h6>
-												{% elif d.user.is_active == False %}
-												<h6 style="color:red">BLOCKED</h6>
-												{% endif %} -->
+												
 												{{d.From}}
 											</td>
 											<td>
 												{{d.To}}
 											</td>
 													<td>
-														{% comment %} {% if perms.accounts.change_doctorschedule %}
-															<a class="btn btn-sm bg-success-light"  href="/editdoctorschedule/{{d.id}}">
-																<i class="fe fe-pencil"></i> Edit
-															</a>
-															{% endif %} {% endcomment %}
+														
 															{% if perms.accounts.delete_doctorschedule %}
 															
 															<a href="/deletedoctorschedule/{{d.id}}" class="btn btn-sm bg-danger-light">
@@ -102,19 +315,40 @@
 															</a>
 															{% endif %}
 															{% if perms.accounts.add_appointment %}
-															<a href="/makeappointment/{{d.id}}" class="btn btn-sm bg-success-light">
-																<i class="fe fe-user-minus"></i> Make appointment
+															{% comment %} {% for a in a %} {% endcomment %}
+																{% comment %} {% if a.status == "PENDING" %} {% endcomment %}
+															
+																{% comment %} {% for a in a %} {% endcomment %}
+																
+															{% if a %}
+														
+															<a href="#modal" data-toggle="modal" id="myLink" class="btn btn-sm bg-success-light">
+																<i class="fe fe-user-minus"></i> 
+										
+																PENDING
+																 {% comment %} {% else %}
+																<a href="/makeappointment/{{d.id}}"  id="myLink" class="btn btn-sm bg-success-light">
+																<i class="fe fe-user-minus"></i> 
+																MAKE APPOINTMENT
+																	
 															</a>
+															{% endif %} {% endcomment %}
+														
+														{% else %}
+															<a href="/makeappointment/{{d.id}}"  id="myLink" class="btn btn-sm bg-success-light">
+																<i class="fe fe-user-minus"></i> 
+																MAKE APPOINTMENTs
+																	
+															</a>
+															{% endif %}	
+															{% comment %} {% else %} {% endcomment %}
+															
+															{% comment %} {% endif %} {% endcomment %}
+																{% comment %} {% endfor%} {% endcomment %}
 														{% endif %}
 															
                                                               
-															<!-- {% if d.user.is_active == True %}
-															<a class="btn btn-sm bg-danger"  href="/blockdoctor/{{d.user.id}}">
-																<i class="fe fe-lock"></i> Block
-																{% elif d.user.is_active == False %}
-																<a class="btn btn-sm bg-danger"  href="/blockdoctor/{{d.user.id}}">
-																	<i class="fe fe-unlock"></i> UnBlock
-															{% endif %} -->
+															
 													</td>     
 												</tr>
 												{% endfor %}
@@ -129,8 +363,30 @@
 				</div>			
 			</div>
 			<!-- /Page Wrapper -->
-		
+			
         </div>
+
+		<div class="modal fade" id="modal" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-dialog-centered" role="document" >
+				<div class="modal-content">
+				<!--	<div class="modal-header">
+						<h5 class="modal-title">Delete</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>-->
+					<div class="modal-body">
+						<div class="form-content p-2">
+							<h4 class="modal-title">PENDING</h4>
+							<p class="mb-4">YOUR REQUEST IS ALREADY SUBMITTED?</p>
+							{% comment %} <button type="button" class="btn btn-primary">Save </button> {% endcomment %}
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- /Main Wrapper -->
 		<div class="modal fade" id="delete_modal" aria-hidden="true" role="dialog">
 			<div class="modal-dialog modal-dialog-centered" role="document" >
@@ -265,7 +521,111 @@
 				</div>
 			</div>
 		</div>
+		
+		<script>
 
-		{% include "includes/js.html" %}
+			/* Initialization of datatable */
+			$(document).ready(function() {
+				$('#tableID').DataTable({ });
+			});
+		</script>
+		<style>
+        <!-- CORE SCRIPTS-->
+		/* Modal styles */
+		.modal {
+		  display: none;
+		  position: fixed;
+		  z-index: 1;
+		  left: 0;
+		  top: 0;
+		  width: 100%;
+		  height: 100%;
+		  background-color: rgba(0,0,0,0.4);
+		}
+		
+		.modal-content {
+		  background-color: #fefefe;
+		  margin: 15% auto;
+		  padding: 20px;
+		  border: 1px solid #888;
+		  width: 80%;
+		}
+		
+		.close {
+		  color: #aaa;
+		  float: right;
+		  font-size: 28px;
+		  font-weight: bold;
+		}
+		
+		.close:hover,
+		.close:focus {
+		  color: black;
+		  text-decoration: none;
+		  cursor: pointer;
+		}
+		
+    <!-- PAGE LEVEL SCRIPTS-->
+	</style>
+   <script>
+	// Get all the links
+var links = document.getElementsByClassName("myLink");
+
+// Initialize an array to store the click counts for each link
+var clickCounts = new Array(links.length).fill(0);
+
+// Add a click event listener to each link
+for (var i = 0; i < links.length; i++) {
+  links[i].addEventListener("click", function(event) {
+    event.preventDefault();
+    
+    // Get the index of the clicked link
+    var index = Array.from(links).indexOf(event.target);
+    
+    // Increment the click count for this link
+    clickCounts[index]++;
+    
+    if (clickCounts[index] === 1) {
+      // Second click
+      clickCounts[index] = 0;
+      
+      // Display the modal
+      document.getElementById("myModal").style.display = "block";
+    } else {
+      // First click
+      setTimeout(function() {
+        clickCounts[index] = 0;
+      }, 300); // Change the time interval (in milliseconds) as needed
+    }
+  });
+}
+
+// Close the modal when the user clicks the close button
+document.getElementsByClassName("close")[0].addEventListener("click", function() {
+  document.getElementById("myModal").style.display = "none";
+});
+
+
+
+   </script>
+    
+		
+    <!-- Bootstrap Core JS -->
+    <script src="{% static 'admin/js/popper.min.js'%}"></script>
+    <script src="{% static 'admin/js/bootstrap.min.js'%}"></script>
+    
+    <!-- Slimscroll JS -->
+    <script src="{% static 'admin/plugins/slimscroll/jquery.slimscroll.min.js'%}"></script>
+    
+    <script src="{% static 'admin/plugins/raphael/raphael.min.js'%}"></script>    
+    <script src="{% static 'admin/plugins/morris/morris.min.js'%}"></script>  
+
+    
+    <!-- Custom JS -->
+    <script  src="{% static 'admin/js/script.js'%}"></script>
+
+
+	</body>
+	</html>
 
 	
